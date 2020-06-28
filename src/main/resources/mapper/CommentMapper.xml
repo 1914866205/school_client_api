@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.niit.soft.client.api.mapper.schoolmate.CommentMapper">
+
+    <resultMap id="CommentVo" type="com.niit.soft.client.api.domain.vo.schoolmate.CommentVo">
+        <id property="pkCommentId" column="pk_comment_id"/>
+        <result property="dynamicId" column="dynamic_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="content" column="content"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="gmtCreate" column="gmt_create"/>
+
+        <collection property="replyComments" ofType="com.niit.soft.client.api.domain.model.schoolmate.ReplyComment">
+            <id property="pkReplyCommentId" column="pk_reply_comment_id"/>
+            <result property="commentId" column="rcomment_id"/>
+            <result property="userId" column="ruser_id"/>
+            <!--      保证字段不重复      -->
+            <result property="content" column="con"/>
+            <result property="isDeleted" column="ris_deleted"/>
+            <result property="gmtCreate" column="rgmt_create"/>
+        </collection>
+
+    </resultMap>
+
+    <select id="findCommentVoById" resultMap="CommentVo">
+        SELECT c.pk_comment_id,
+               c.dynamic_id,
+               c.user_id,
+               c.content,
+               c.is_deleted,
+               c.gmt_create,
+               r.pk_reply_comment_id,
+               r.comment_id AS rcomment_id,
+               r.user_id    AS ruser_id,
+               r.content    AS con,
+               r.is_deleted AS ris_deleted,
+               r.gmt_create AS rgmt_create
+        FROM comment c
+                 LEFT JOIN reply_comment r ON c.pk_comment_id = r.comment_id
+        WHERE c.pk_comment_id = #{id}
+        ORDER BY r.gmt_create DESC
+    </select>
+
+
+</mapper>

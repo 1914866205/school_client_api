@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.niit.soft.client.api.mapper.JobMapper">
+    <resultMap id="JobVo" type="com.niit.soft.client.api.domain.vo.JobVo">
+        <id property="pkJobId" column="pk_job_id" javaType="java.lang.Long"/>
+        <result property="name" column="job_name"/>
+        <result property="description" column="description"/>
+        <result property="boss" column="boss"/>
+        <result property="bossPhone" column="boss_phone"/>
+        <result property="bossAvatar" column="phone_avatar"/>
+        <result property="workplace" column="workplace"/>
+        <result property="workingTime" column="working_time"/>
+        <result property="pay" column="pay"/>
+        <result property="min" column="min"/>
+        <result property="max" column="max"/>
+        <result property="experience" column="experience"/>
+        <result property="diploma" column="diploma"/>
+        <result property="number" column="number"/>
+        <result property="gmtCreate" column="gmt_create"/>
+        <association javaType="com.niit.soft.client.api.domain.model.Company" property="company">
+            <id property="pkCompanyId" column="pk_company_id" javaType="java.lang.Long"/>
+            <result property="name" column="company_name"/>
+            <result property="tag" column="tag"/>
+            <result property="logo" column="logo"/>
+            <result property="workers" column="workers"/>
+            <result property="type" column="type"/>
+            <result property="address" column="address"/>
+            <result property="longitude" column="longitude"/>
+            <result property="latitude" column="latitude"/>
+        </association>
+        <association property="jobType" javaType="com.niit.soft.client.api.domain.model.JobType">
+            <id property="pkJobTypeId" column="pk_job_type_id" javaType="java.lang.Long"/>
+            <result property="name" column="type_name"/>
+        </association>
+    </resultMap>
+
+    <select id="findJob" resultMap="JobVo">
+        SELECT j.pk_job_id,
+               j.name AS job_name,
+               j.description,
+               j.boss,
+               j.boss_phone,
+               j.boss_avatar,
+               j.workplace,
+               j.working_time,
+               j.pay,
+               j.min,
+               j.max,
+               j.experience,
+               j.diploma,
+               j.number,
+               j.gmt_create,
+               c.pk_company_id,
+               c.name AS company_name,
+               c.tag,
+               c.logo,
+               c.workers,
+               c.type,
+               c.address,
+               c.longitude,
+               c.latitude,
+               t.pk_job_type_id,
+               t.name AS type_name
+        FROM job j
+                 LEFT JOIN company c ON j.company_id = c.pk_company_id
+                 LEFT JOIN job_type t ON j.job_type_id = t.pk_job_type_id
+        WHERE j.is_deleted = 0 AND j.pk_job_id = #{id}
+    </select>
+
+    <select id="jobList" resultMap="JobVo">
+        SELECT j.pk_job_id,
+               j.name AS job_name,
+               j.boss,
+               j.boss_avatar,
+               j.workplace,
+               j.number,
+               j.min,
+               j.max,
+               j.experience,
+               j.diploma,
+               j.number,
+               j.gmt_create,
+               c.name AS company_name,
+               t.name AS type_name
+        FROM job j
+                 LEFT JOIN company c
+                           ON j.company_id = c.pk_company_id
+                 LEFT JOIN job_type t
+                           ON j.job_type_id = t.pk_job_type_id
+        WHERE j.is_deleted = 0
+        ORDER BY ${field} DESC
+        LIMIT #{currentPage}, #{pageSize}
+    </select>
+
+    <select id="jobListByType" resultMap="JobVo">
+        SELECT j.pk_job_id,
+               j.name AS job_name,
+               j.boss,
+               j.boss_avatar,
+               j.workplace,
+               j.number,
+               j.min,
+               j.max,
+               j.experience,
+               j.diploma,
+               j.gmt_create,
+               c.name AS company_name,
+               t.name AS type_name
+        FROM job j
+                 LEFT JOIN company c
+                           ON j.company_id = c.pk_company_id
+                 LEFT JOIN job_type t
+                           ON j.job_type_id = t.pk_job_type_id
+        WHERE j.is_deleted = 0 AND j.job_type_id = #{field}
+        ORDER BY max DESC
+        LIMIT #{currentPage}, #{pageSize}
+    </select>
+
+    <select id="jobListByKeyword" resultMap="JobVo">
+        SELECT j.pk_job_id,
+               j.name AS job_name,
+               j.boss,
+               j.boss_avatar,
+               j.workplace,
+               j.number,
+               j.min,
+               j.max,
+               j.experience,
+               j.diploma,
+               j.gmt_create,
+               c.name AS company_name,
+               t.name AS type_name
+        FROM job j
+                 LEFT JOIN company c
+                           ON j.company_id = c.pk_company_id
+                 LEFT JOIN job_type t
+                           ON j.job_type_id = t.pk_job_type_id
+        WHERE j.is_deleted = 0 AND j.name LIKE CONCAT('%', #{field}, '%')
+        ORDER BY max DESC
+        LIMIT #{currentPage}, #{pageSize}
+    </select>
+
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.niit.soft.client.api.mapper.PartJobMapper">
+
+    <resultMap id="partJobVo" type="com.niit.soft.client.api.domain.vo.PartJobVo">
+        <id property="pkPartJobId" column="pk_part_job_id" javaType="java.lang.Long"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="bossId" column="boss_id"/>
+        <result property="bossName" column="boss_name"/>
+        <result property="bossPhone" column="phone_number"/>
+        <result property="avatar" column="avatar"/>
+        <result property="workplace" column="workplace"/>
+        <result property="workingDate" column="working_date"/>
+        <result property="workingTime" column="working_time"/>
+        <result property="pay" column="pay"/>
+        <result property="payType" column="pay_type"/>
+        <result property="jobType" column="job_type"/>
+        <result property="number" column="number"/>
+        <result property="have" column="have"/>
+        <result property="need" column="need"/>
+
+    </resultMap>
+    <select id="findPartJob" resultMap="partJobVo">
+        SELECT j.pk_part_job_id,
+               j.name,
+               j.description,
+               j.boss_id,
+               u.user_name AS boss_name,
+               u.phone_number,
+               u.avatar,
+               j.workplace,
+               j.working_date,
+               j.working_time,
+               j.pay,
+               j.pay_type,
+               j.job_type,
+               j.number,
+               j.have,
+               j.need
+        FROM user_account u
+                 INNER JOIN part_job j
+                            ON u.pk_user_account_id = j.boss_id
+        ORDER BY ${field} DESC
+    </select>
+
+
+</mapper>

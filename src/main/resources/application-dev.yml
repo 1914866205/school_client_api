@@ -1,0 +1,10 @@
+server:
+#  port: 8080
+#  要用第三方，该80 ，先上传8080，后期要改
+  port: 80
+
+#  ssl:
+#    key-store: classpath:4069081_ntt1914866205.xyz.pfx
+#    key-store-password: shf5BDWS
+#    key-store-type: PKCS12
+

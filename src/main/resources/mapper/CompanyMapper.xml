@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.niit.soft.client.api.mapper.CompanyMapper">
+    <resultMap id="CompanyVo" type="com.niit.soft.client.api.domain.vo.CompanyVo">
+        <id property="pkCompanyId" column="pk_company_id" javaType="java.lang.Long"/>
+        <result property="name" column="company_name"/>
+        <result property="tag" column="tag"/>
+        <result property="logo" column="logo"/>
+        <result property="workers" column="workers"/>
+        <result property="type" column="type"/>
+        <result property="description" column="description"/>
+        <result property="workingTime" column="working_time"/>
+        <result property="workingStatus" column="working_status"/>
+        <result property="vacation" column="vacation"/>
+        <result property="address" column="address"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="gmtCreate" column="gmt_create"/>
+
+        <collection property="companyJobVos" ofType="com.niit.soft.client.api.domain.vo.CompanyJobVo">
+            <id property="pkJobId" column="pk_job_id" javaType="java.lang.Long"/>
+            <result property="name" column="job_name"/>
+            <result property="boss" column="boss"/>
+            <result property="bossAvatar" column="boss_avatar"/>
+            <result property="min" column="min"/>
+            <result property="max" column="max"/>
+            <result property="experience" column="experience"/>
+            <result property="diploma" column="diploma"/>
+            <association property="jobType" javaType="com.niit.soft.client.api.domain.model.JobType">
+                <id property="pkJobTypeId" column="pk_job_type_id" javaType="java.lang.Long"/>
+                <result property="name" column="type_name"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <select id="findDetails" resultMap="CompanyVo">
+        SELECT c.pk_company_id,
+               c.name AS company_name,
+               c.tag,
+               c.logo,
+               c.workers,
+               c.type,
+               c.description,
+               c.working_time,
+               c.working_status,
+               c.vacation,
+               c.address,
+               c.longitude,
+               c.latitude,
+               c.gmt_create,
+               j.pk_job_id,
+               j.name AS job_name,
+               j.boss,
+               j.boss_avatar,
+               j.min,
+               j.max,
+               j.experience,
+               j.diploma,
+               t.pk_job_type_id,
+               t.name AS type_name
+        FROM company c
+                 LEFT JOIN job j
+                           ON c.pk_company_id = j.company_id
+                 LEFT JOIN job_type t
+                           ON j.job_type_id = t.pk_job_type_id
+        WHERE c.is_deleted = 0 AND j.is_deleted = 0 AND c.pk_company_id = #{id}
+    </select>
+
+</mapper>
